@@ -58,7 +58,8 @@ body {
 }
 
 #sketch-area {
-  /* display: flex; */
+  display: flex;
+  flex-wrap: wrap;
   margin: 100px auto;
   background-color: white;
 }

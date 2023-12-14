@@ -1,79 +1,95 @@
-// const container = document.querySelector("#container");
-// const size = document.querySelector(".size");
-// const black = document.querySelector(".black");
-// const random = document.querySelector(".random");
-// const erase = document.querySelector(".erase");
-// const reset = document.querySelector(".reset");
-
-// let content;
-// let grid;
-
-// //Create grids
-
-// for (let i = 0; i < 16; i++) {
-//   content = document.createElement("div");
-//   content.classList.add("content");
-//   container.appendChild(content);
-//   for (let j = 0; j < 16; j++) {
-//     grid = document.createElement("div");
-//     grid.classList.add("grid");
-//     content.appendChild(grid);
-//     grid.addEventListener("mouseover", function () {
-//       this.style.backgroundColor = "black";
-//     });
-//   }
-// }
-
-// //Ask for size and create grid per size
-// size.addEventListener("click", () => {
-//   s = prompt("Input size (1 to 100): ");
-//   while (s <= 0 || s > 100) {
-//     s = prompt("Input correct size (1 to 100): ");
-//   }
-// });
-
-// //make it black
-// function makeBlack() {
-//   black.addEventListener("click", () => {
-//     grid.addEventListener("mouseover", function () {
-//       this.style.backgroundColor = "black";
-//     });
-//   });
-// }
-
-// //erase
-// function eraser() {
-//   erase.addEventListener("click", () => {
-//     grid.addEventListener("mouseover", function () {
-//       this.style.backgroundColor = "white";
-//     });
-//   });
-// }
-
-// //reset
-// function resetAll() {
-//   reset.addEventListener("click", () => {});
-// }
-
-const gridSize = 600;
-let rows = 16;
-let cols = 16;
+const containerSize = 600;
+let defaultGridSize = 16;
+let currentColor = "black";
 
 const sketchArea = document.querySelector("#sketch-area");
-sketchArea.style.width = `${gridSize}px`;
-sketchArea.style.height = `${gridSize}px`;
+sketchArea.style.width = sketchArea.style.height = `${containerSize}px`;
 
-function createGrid() {
-  for (let i = 0; i < rows * cols; i++) {
+const size = document.querySelector(".size");
+size.addEventListener("click", setSize);
+
+const makeBlack = document.querySelector(".makeBlack");
+makeBlack.addEventListener("click", () => {
+  currentColor = "black";
+});
+
+const makeRandom = document.querySelector(".makeRandom");
+makeRandom.addEventListener("click", () => {
+  currentColor = randomColor();
+});
+
+const erase = document.querySelector(".erase");
+erase.addEventListener("click", () => {
+  currentColor = "erase";
+});
+
+const reset = document.querySelector(".reset");
+reset.addEventListener("click", renew);
+
+//create new grid
+function createGrid(defaultGridSize) {
+  const numOfSquare = defaultGridSize * defaultGridSize;
+  for (let i = 0; i < numOfSquare; i++) {
     const gridCell = document.createElement("div");
 
-    gridCell.style.width = `${gridSize / cols - 2}px`;
-    gridCell.style.height = `${gridSize / rows - 2}px`;
+    //the border has 1px each side, therefore 2px is subtracted below
+    gridCell.style.width = gridCell.style.height = `${
+      containerSize / defaultGridSize - 2
+    }px`;
 
     gridCell.classList.add("cell");
 
     sketchArea.appendChild(gridCell);
+
+    gridCell.addEventListener("mouseover", changeColor);
   }
 }
 
-createGrid();
+//Ask for size and create grid per size
+
+function setSize() {
+  let gridSize;
+  gridSize = prompt("Input size (1 to 100): ");
+  while (gridSize < 1 || gridSize > 100 || isNaN(gridSize)) {
+    gridSize = prompt("Input correct size (1 to 100): ");
+  }
+  removeAll();
+  createGrid(gridSize);
+}
+
+//remove everything before reset or setting new size
+function removeAll() {
+  while (sketchArea.firstChild) {
+    sketchArea.removeChild(sketchArea.firstChild);
+  }
+}
+
+//generate random color
+function randomColor() {
+  const randomRed = Math.floor(Math.random() * 256);
+  const randomGreen = Math.floor(Math.random() * 256);
+  const randomBlue = Math.floor(Math.random() * 256);
+  return `rgb(${randomRed}, ${randomGreen}, ${randomBlue})`;
+}
+
+//change color
+function changeColor() {
+  if (currentColor === "black") {
+    this.style.backgroundColor = "black";
+  } else if (currentColor === "erase") {
+    this.style.backgroundColor = "white";
+  } else {
+    //random color is chosen every time the grid is created
+    const random = randomColor();
+    this.style.backgroundColor = random;
+  }
+}
+
+//reset everything
+function renew() {
+  removeAll();
+  createGrid(16);
+}
+
+//call the function with default size
+createGrid(16);
