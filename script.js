@@ -1,9 +1,9 @@
-const containerSize = 600;
+const containerSize = 500;
 let defaultGridSize = 16;
 let currentColor = "black";
 
-const sketchArea = document.querySelector("#sketch-area");
-sketchArea.style.width = sketchArea.style.height = `${containerSize}px`;
+const container = document.querySelector("#container");
+container.style.width = container.style.height = `${containerSize}px`;
 
 const size = document.querySelector(".size");
 size.addEventListener("click", setSize);
@@ -30,18 +30,18 @@ reset.addEventListener("click", renew);
 function createGrid(defaultGridSize) {
   const numOfSquare = defaultGridSize * defaultGridSize;
   for (let i = 0; i < numOfSquare; i++) {
-    const gridCell = document.createElement("div");
+    const grid = document.createElement("div");
 
     //the border has 1px each side, therefore 2px is subtracted below
-    gridCell.style.width = gridCell.style.height = `${
+    grid.style.width = grid.style.height = `${
       containerSize / defaultGridSize - 2
     }px`;
 
-    gridCell.classList.add("cell");
+    grid.classList.add("grid");
 
-    sketchArea.appendChild(gridCell);
+    container.appendChild(grid);
 
-    gridCell.addEventListener("mouseover", changeColor);
+    grid.addEventListener("mouseover", changeColor);
   }
 }
 
@@ -59,8 +59,8 @@ function setSize() {
 
 //remove everything before reset or setting new size
 function removeAll() {
-  while (sketchArea.firstChild) {
-    sketchArea.removeChild(sketchArea.firstChild);
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
   }
 }
 
